@@ -23,7 +23,7 @@ class Ufo::Docker
       start_time = Time.now
       store_full_image_name
 
-      command = "docker build #{build_options}-t #{full_image_name} -f #{@dockerfile} ."
+      command = "docker #{build_command} #{build_options}-t #{full_image_name} -f #{@dockerfile} ."
       say "Building docker image with:".color(:green)
       say "  #{command}".color(:green)
       compile_dockerfile_erb
@@ -43,6 +43,12 @@ class Ufo::Docker
       took = Time.now - start_time
       say "Docker image #{full_image_name} built.  "
       say "Docker build took #{pretty_time(took)}.".color(:green)
+    end
+
+    def build_command
+      build_cmd = ENV['UFO_DOCKER_USE_BUILDX'] ? "buildx build" : "build"
+      build_cmd += " "
+      build_cmd
     end
 
     def build_options
